@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { IUser } from '../interfaces/IUser';
+import { IUser, UserType } from '../interfaces/IUser';
 
 const User = new mongoose.Schema(
   {
@@ -16,8 +16,17 @@ const User = new mongoose.Schema(
       index: true,
     },
 
+    type: {
+      type: String,
+      enum: ['buyer', 'seller', 'logistics'],
+      require: [true, 'Please enter user type'],
+      default: 'buyer',
+    },
+
     password: String,
+
     salt: String,
+
     role: {
       type: String,
       default: 'user',

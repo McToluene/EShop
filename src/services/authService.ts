@@ -17,7 +17,7 @@ export default class AuthService {
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {}
 
-  public async signUp(userDto: IUserDTO): Promise<{ user: IUser; token: string }> {
+  async register(userDto: IUserDTO): Promise<{ user: IUser; token: string }> {
     try {
       const salt = randomBytes(32);
 
@@ -53,6 +53,30 @@ export default class AuthService {
     }
   }
 
+  async login(email: string, password: string): Promise<{ user: IUser; token: string }> {
+    const userRecord = await this.usermodel.findOne({ email });
+    if (!userRecord) {
+      throw new Error('User not registered');
+    }
+
+    this.logger.silly('Checking password');
+    const validatePassword = await argon2.verify(userRecord.password, password);
+    if (validatePassword) {
+      this.logger.silly('Password is valid!');
+      this.logger.silly('Generating JWT');
+      const token: string = this.generateToken(userRecord);
+
+      const user = userRecord.toObject();
+      Reflect.deleteProperty(user, 'password');
+      Reflect.deleteProperty(user, 'salt');
+
+      return { user, token };
+    } else {
+      // throw (new Error('Invalid password').name = 'UnauthorizedError');
+      throw new Error('Invalid password!');
+    }
+  }
+
   private generateToken(userRecord: IUser): string {
     const today = new Date();
     const exp = new Date(today);
@@ -62,7 +86,7 @@ export default class AuthService {
     return jwt.sign(
       {
         _id: userRecord._id,
-        role: userRecord.role,
+        role: userRecord.type,
         name: userRecord.name,
         exp: exp.getTime() / 1000,
       },

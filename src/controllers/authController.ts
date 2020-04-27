@@ -4,13 +4,13 @@ import { Logger } from 'winston';
 import AuthService from '../services/authService';
 import { IUserDTO } from '../interfaces/IUser';
 
-export const signUp = async (req: Request, res: Response, next: NextFunction) => {
+export const register = async (req: Request, res: Response, next: NextFunction) => {
   const logger: Logger = Container.get('logger');
-  logger.debug('Calling sign-in endpoint with body: %o', req.body);
+  logger.debug('Calling register endpoint with body: %o', req.body);
 
   try {
     const authServiceInstance = Container.get<AuthService>(AuthService);
-    const { user, token } = await authServiceInstance.signUp(req.body as IUserDTO);
+    const { user, token } = await authServiceInstance.register(req.body as IUserDTO);
 
     return res.status(201).json({ user, token });
   } catch (error) {
@@ -19,6 +19,18 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
-export async function signIn(req: Request, res: Response, next: NextFunction) {
-  return res.json('Hello World!');
+export async function login(req: Request, res: Response, next: NextFunction) {
+  const logger = Container.get<Logger>('logger');
+  logger.debug('Calling login endpoint with body: %o', req.body);
+
+  try {
+    const { email, password } = req.body;
+    const authServiceInstance = Container.get<AuthService>(AuthService);
+    const { user, token } = await authServiceInstance.login(email, password);
+
+    return res.status(200).json({ user, token });
+  } catch (error) {
+    logger.error('Error: %0', error);
+    return next(error);
+  }
 }
