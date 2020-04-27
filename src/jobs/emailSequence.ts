@@ -1,7 +1,7 @@
 import Container from 'typedi';
-import MailerService from '../services/mailer';
+import MailerService from '../services/mailerService';
 
-export default async function (job, done): Promise<void> {
+export default async function (job, done: Function): Promise<void> {
   const Logger: any = Container.get('logger');
 
   try {

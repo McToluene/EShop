@@ -29,8 +29,8 @@ export default {
 
   // Mailgun email credentials
   emails: {
-    apiKey: '340c8696542b47438853156db2950008-f135b0f1-a348f6e2',
-    domain: 'sandbox5ba4dd2bedb34dc7bb1a8d5956793794.mailgun.org',
+    apiKey: process.env.API_KEY,
+    domain: process.env.DOMAIN,
   },
 
   // API configs

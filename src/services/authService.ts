@@ -1,6 +1,6 @@
 import { Inject, Service } from 'typedi';
 import { EventDispatcher, EventDispatcherInterface } from '../decorators/eventDispatcher';
-import MailerService from './mailer';
+import MailerService from './mailerService';
 import { IUserDTO, IUser } from '../interfaces/IUser';
 import { randomBytes } from 'crypto';
 import argon2 from 'argon2';

@@ -1,10 +1,11 @@
 import { Service, Inject } from 'typedi';
+import Mailgun from 'mailgun-js';
 
 @Service()
 export default class MailerService {
-  constructor(@Inject('emailClient') private emailClient) {}
+  constructor(@Inject('emailClient') private emailClient: Mailgun.Mailgun) {}
 
-  async sendWelcomeEmail(email: String) {
+  async sendWelcomeEmail(email: string) {
     // using mailgun
     const data = {
       from: 'Mailgun Sandbox <postmaster@sandbox5ba4dd2bedb34dc7bb1a8d5956793794.mailgun.org>',
