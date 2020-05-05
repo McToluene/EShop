@@ -5,13 +5,13 @@ import Mailgun from 'mailgun-js';
 export default class MailerService {
   constructor(@Inject('emailClient') private emailClient: Mailgun.Mailgun) {}
 
-  async sendWelcomeEmail(email: string) {
+  async sendWelcomeEmail(email: string, subject: string, message: string) {
     // using mailgun
     const data = {
       from: 'Mailgun Sandbox <postmaster@sandbox5ba4dd2bedb34dc7bb1a8d5956793794.mailgun.org>',
       to: email,
-      subject: 'Welcome to EShop',
-      text: 'Good to have you on board',
+      subject: subject,
+      text: message,
     };
 
     this.emailClient.messages().send(data);

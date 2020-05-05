@@ -1,4 +1,5 @@
-import { Schema } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
+import { IShop } from '../interfaces/IShop';
 
 const Shop = new Schema({
   name: {
@@ -17,3 +18,4 @@ const Shop = new Schema({
     ref: 'User',
   },
 });
+export default model<IShop & Document>('Shop', Shop);

@@ -8,7 +8,7 @@ export default async function (job, done: Function): Promise<void> {
     Logger.debug('Email Sequence Job Triggered!');
     const { email, name }: { [key: string]: string } = job.attrs.data;
     const mailerServiceInstance = Container.get(MailerService);
-    await mailerServiceInstance.sendWelcomeEmail(email);
+    await mailerServiceInstance.sendWelcomeEmail(email, '', '');
     done();
   } catch (error) {
     Logger.error('Error with email sequence job: %o', error);

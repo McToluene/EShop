@@ -39,7 +39,7 @@ export default class AuthService {
       }
 
       this.logger.silly('Sending welcome email');
-      await this.mailerService.sendWelcomeEmail(userRecord.email);
+      await this.mailerService.sendWelcomeEmail(userRecord.email, 'Welcome on board!', 'Good to have you on baord');
       this.eventDispatcher.dispatch(events.user.signUp, { user: userRecord });
 
       const user = userRecord.toObject();

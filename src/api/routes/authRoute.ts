@@ -4,7 +4,7 @@ import { celebrate, Joi } from 'celebrate';
 
 const authRoute: Router = Router();
 
-// @route   POST api/auth
+// @route   POST api/auth/register
 // @desc    Create user and get token
 // @access  public
 authRoute.post(

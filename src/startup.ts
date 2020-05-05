@@ -13,9 +13,14 @@ export default async function ({ expressApp }) {
     model: require('./models/user').default,
   };
 
+  const shopModel = {
+    name: 'shopModel',
+    model: require('./models/shop').default,
+  };
+
   const { agenda } = await dependencyInjector({
     mongoConnection,
-    models: [userModel],
+    models: [userModel, shopModel],
   });
 
   Logger.info('Dependecy Injector loaded');

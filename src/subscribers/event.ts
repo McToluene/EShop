@@ -3,4 +3,7 @@ export default {
     signUp: 'onUserRegister',
     signIn: 'onUserLogin',
   },
+  shop: {
+    created: 'onShopCreated',
+  },
 };

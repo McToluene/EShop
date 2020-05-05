@@ -1,4 +1,5 @@
-import mongoose, { Schema } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
+import { IProduct } from '../interfaces/IProduct';
 
 const Product = new Schema({
   name: {
@@ -27,3 +28,4 @@ const Product = new Schema({
     ref: 'Shop',
   },
 });
+export default model<IProduct & Document>('Product', Product);
