@@ -30,7 +30,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
     return res.status(200).json({ user, token });
   } catch (error) {
-    logger.error('Error: %0', error);
+    logger.error('Error: %o', error);
     return next(error);
   }
 }
