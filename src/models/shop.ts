@@ -17,5 +17,12 @@ const Shop = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
+
+  address: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Address',
+    },
+  ],
 });
 export default model<IShop & Document>('Shop', Shop);

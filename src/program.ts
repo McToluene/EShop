@@ -41,6 +41,13 @@ export default ({ app }: { app: Application }) => {
   });
 
   app.use((err, req: Request, res: Response, next: NextFunction) => {
+    if (err.name === '403') {
+      return res.status(err.name).send({ message: err.message }).end();
+    }
+    return next(err);
+  });
+
+  app.use((err, req: Request, res: Response, next: NextFunction) => {
     res.status(err.status || 500);
     res.json({
       errors: {

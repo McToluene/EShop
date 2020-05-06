@@ -13,15 +13,14 @@ export default class ShopService {
     private mailerService: MailerService,
     @Inject('shopModel') private shopModel: Models.ShopModel,
     @Inject('userModel') private userModel: Models.UserModel,
+    @Inject('addressModel') private addressModel: Models.AddressModel,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {}
 
-  async createShop(shopDto: IShopDto, _id: string): Promise<{ shop: IShop }> {
+  async createShop(shopDto: IShopDto, type: string): Promise<{ shop: IShop }> {
     try {
       this.logger.silly('Checking user type');
-      const userRecord = await this.userModel.findOne({ _id });
-
-      if (userRecord && !(userRecord.type === UserType.seller)) {
+      if (type === UserType.seller) {
         throw new Error('Unauthorized');
       }
 
@@ -33,19 +32,45 @@ export default class ShopService {
         throw new Error('Registration number used');
       }
 
-      this.logger.silly('Creating shop db record');
-      const newShopRecord = await this.shopModel.create(shopDto);
+      this.logger.silly(`Creating address db for ${shopDto.address.length} record`);
 
-      if (!newShopRecord) {
-        throw new Error('Shop cannot be created');
+      const addressRecord = await this.addressModel.create(shopDto.address);
+      if (!addressRecord) {
+        throw new Error('Internal Server Error');
       }
 
-      this.logger.silly('Sending welcome email');
-      await this.mailerService.sendWelcomeEmail(userRecord.email, `Shop ${newShopRecord.name} created`, ''); // Todo: Write a better message for shop created
-      this.eventDispatcher.dispatch(events.shop.created, { shop: newShopRecord });
+      this.logger.silly('Creating shop db record');
+      const buildShop: IShopDto = {
+        name: shopDto.name,
+        registrationNumber: shopDto.registrationNumber,
+        address: [...addressRecord],
+        owner: shopDto.owner,
+      };
+      const newShopRecord = await this.shopModel.create(buildShop);
+
+      if (!newShopRecord) {
+        throw (new Error('Shop cannot be created').name = '403');
+      }
 
       const shop = newShopRecord.toObject();
 
+      return { shop };
+    } catch (error) {
+      this.logger.error(error);
+      throw new Error(error);
+    }
+  }
+
+  async updateShop(shopDto: IShopDto, type: string): Promise<{ shop: IShop }> {
+    try {
+      this.logger.silly('Checking user type');
+      if (type === UserType.seller) {
+        throw new Error('Unauthorized');
+      }
+
+      const newShopRecord = await this.shopModel.findByIdAndUpdate();
+
+      const shop = newShopRecord.toObject();
       return { shop };
     } catch (error) {
       this.logger.error(error);

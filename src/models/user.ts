@@ -31,6 +31,15 @@ const User = new Schema(
       type: String,
       default: 'user',
     },
+
+    phoneNumbers: [String],
+
+    address: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Address',
+      },
+    ],
   },
   { timestamps: true },
 );
