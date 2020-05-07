@@ -5,12 +5,12 @@ export interface IShop {
   name: string;
   registrationNumber: string;
   owner: string;
-  address: string;
+  address: [IAddressDto];
 }
 
-export interface IShopDto {
+export interface IShopDTO {
   name: string;
   registrationNumber: string;
   owner: string;
-  address: IAddressDto[];
+  address: [IAddressDto];
 }

@@ -20,9 +20,22 @@ const Shop = new Schema({
 
   address: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Address',
+      city: {
+        type: String,
+        require: [true, 'Please enter city'],
+      },
+
+      street: {
+        type: String,
+        require: [true, 'Please enter street'],
+      },
+
+      state: {
+        type: String,
+        require: [true, 'Please specify state'],
+      },
     },
   ],
 });
+
 export default model<IShop & Document>('Shop', Shop);

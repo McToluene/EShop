@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Container from 'typedi';
 import { Logger } from 'winston';
 import ShopService from '../services/shopService';
-import { IShopDto } from '../interfaces/IShop';
+import { IShopDTO } from '../interfaces/IShop';
 
 export const createShop = async (req: Request, res: Response, next: NextFunction) => {
   const logger: Logger = Container.get('logger');
@@ -10,7 +10,7 @@ export const createShop = async (req: Request, res: Response, next: NextFunction
 
   try {
     const shopServiceInstance = Container.get<ShopService>(ShopService);
-    const { shop } = await shopServiceInstance.createShop(req.body as IShopDto, req.currentUser.type);
+    const { shop } = await shopServiceInstance.createShop(req.body as IShopDTO, req.currentUser.type);
 
     return res.status(201).json({ shop });
   } catch (error) {
@@ -25,7 +25,11 @@ export const updateShop = async (req: Request, res: Response, next: NextFunction
 
   try {
     const shopServiceInstance = Container.get<ShopService>(ShopService);
-    const { shop } = await shopServiceInstance.updateShop(req.body as IShopDto, req.currentUser.type);
+    const { shop } = await shopServiceInstance.updateShop(
+      req.body as IShopDTO,
+      req.currentUser.type,
+      req.query['id'].toString(),
+    );
 
     return res.status(201).json({ shop });
   } catch (error) {

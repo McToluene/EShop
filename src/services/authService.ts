@@ -1,7 +1,7 @@
 import { Inject, Service } from 'typedi';
 import { EventDispatcher, EventDispatcherInterface } from '../decorators/eventDispatcher';
 import MailerService from './mailerService';
-import { IUserDTO, IUser } from '../interfaces/IUser';
+import { IUserRegisterDTO, IUser } from '../interfaces/IUser';
 import { randomBytes } from 'crypto';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
@@ -17,7 +17,7 @@ export default class AuthService {
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {}
 
-  async register(userDto: IUserDTO): Promise<{ user: IUser; token: string }> {
+  async register(userDto: IUserRegisterDTO): Promise<{ user: IUser; token: string }> {
     try {
       const salt = randomBytes(32);
 
@@ -72,7 +72,6 @@ export default class AuthService {
 
       return { user, token };
     } else {
-      // throw (new Error('Invalid password').name = 'UnauthorizedError');
       throw new Error('Invalid password!');
     }
   }

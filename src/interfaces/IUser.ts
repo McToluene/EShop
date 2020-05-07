@@ -1,3 +1,5 @@
+import { IAddress } from './IAddress';
+
 export interface IUser {
   _id: string;
   name: string;
@@ -6,13 +8,22 @@ export interface IUser {
   type: UserType;
   salt: string;
   role: string;
+  address: IAddress[];
 }
 
-export interface IUserDTO {
+export interface IUserRegisterDTO {
   name: string;
   email: string;
   password: string;
   type: UserType;
+}
+
+export interface IUserUpdateDTO {
+  name: string;
+  email: string;
+  password: string;
+  type: UserType;
+  address: IAddress[];
 }
 
 /*

@@ -1,10 +1,9 @@
 import { Service, Inject } from 'typedi';
 import { Logger } from 'winston';
-import { IShopDto, IShop } from '../interfaces/IShop';
+import { IShopDTO, IShop } from '../interfaces/IShop';
 import { UserType } from '../interfaces/IUser';
 import MailerService from './mailerService';
 import { EventDispatcher, EventDispatcherInterface } from '../decorators/eventDispatcher';
-import events from '../subscribers/event';
 
 @Service()
 export default class ShopService {
@@ -13,14 +12,13 @@ export default class ShopService {
     private mailerService: MailerService,
     @Inject('shopModel') private shopModel: Models.ShopModel,
     @Inject('userModel') private userModel: Models.UserModel,
-    @Inject('addressModel') private addressModel: Models.AddressModel,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
   ) {}
 
-  async createShop(shopDto: IShopDto, type: string): Promise<{ shop: IShop }> {
+  async createShop(shopDto: IShopDTO, type: string): Promise<{ shop: IShop }> {
     try {
       this.logger.silly('Checking user type');
-      if (type === UserType.seller) {
+      if (!(type === UserType.seller)) {
         throw new Error('Unauthorized');
       }
 
@@ -32,28 +30,14 @@ export default class ShopService {
         throw new Error('Registration number used');
       }
 
-      this.logger.silly(`Creating address db for ${shopDto.address.length} record`);
-
-      const addressRecord = await this.addressModel.create(shopDto.address);
-      if (!addressRecord) {
-        throw new Error('Internal Server Error');
-      }
-
       this.logger.silly('Creating shop db record');
-      const buildShop: IShopDto = {
-        name: shopDto.name,
-        registrationNumber: shopDto.registrationNumber,
-        address: [...addressRecord],
-        owner: shopDto.owner,
-      };
-      const newShopRecord = await this.shopModel.create(buildShop);
+      const newShopRecord = await this.shopModel.create(shopDto);
 
       if (!newShopRecord) {
         throw (new Error('Shop cannot be created').name = '403');
       }
 
       const shop = newShopRecord.toObject();
-
       return { shop };
     } catch (error) {
       this.logger.error(error);
@@ -61,16 +45,27 @@ export default class ShopService {
     }
   }
 
-  async updateShop(shopDto: IShopDto, type: string): Promise<{ shop: IShop }> {
+  async updateShop(shopDto: IShopDTO, type: string, _id: string): Promise<{ shop: IShop }> {
     try {
       this.logger.silly('Checking user type');
-      if (type === UserType.seller) {
+      if (!(type === UserType.seller)) {
         throw new Error('Unauthorized');
       }
 
-      const newShopRecord = await this.shopModel.findByIdAndUpdate();
+      this.logger.silly('Checking shop db record');
+      const registrationNumber = shopDto.registrationNumber;
+      const shopRecord = await this.shopModel.findOne({ registrationNumber });
 
-      const shop = newShopRecord.toObject();
+      if (shopRecord && shopRecord.id !== _id) {
+        throw new Error('Registration number used');
+      }
+
+      const updatedShopRecord = await this.shopModel.findOneAndUpdate({ _id }, { $set: shopDto }, { new: true });
+
+      if (!updatedShopRecord) {
+        throw new Error('Shop cannot be updated');
+      }
+      const shop = updatedShopRecord.toObject();
       return { shop };
     } catch (error) {
       this.logger.error(error);

@@ -3,7 +3,6 @@ import isAuth from '../middlewares/isAuth';
 import { celebrate, Joi } from 'celebrate';
 import { createShop, updateShop } from '../../controllers/shopController';
 import attachCurrentUser from '../middlewares/attachCurrentUser';
-import attachCurrentShop from '../middlewares/attachCurrentShop';
 
 const shopRoute: Router = Router();
 
@@ -37,7 +36,6 @@ shopRoute.post(
   '/update',
   isAuth,
   attachCurrentUser,
-  attachCurrentShop,
   celebrate({
     body: Joi.object({
       name: Joi.string().required(),
